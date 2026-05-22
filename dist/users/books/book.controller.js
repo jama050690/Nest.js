@@ -12,54 +12,54 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersController = void 0;
+exports.BookController = void 0;
 const common_1 = require("@nestjs/common");
-const users_service_1 = require("./users.service");
-let UsersController = class UsersController {
-    usersService;
-    constructor(usersService) {
-        this.usersService = usersService;
+const book_services_1 = require("./book.services");
+let BookController = class BookController {
+    booksService;
+    constructor(booksService) {
+        this.booksService = booksService;
     }
     getAll() {
-        return this.usersService.getAll();
+        return this.booksService.getAll();
     }
     getById(id) {
-        return this.usersService.getById(id);
+        return this.booksService.getById(id);
     }
     create(dto) {
-        return this.usersService.create(dto);
+        return this.booksService.post(dto);
     }
-    patch(id, dto) {
-        return this.usersService.patch(id, dto);
+    update(id, dto) {
+        return this.booksService.patch(id, dto);
     }
     put(id, dto) {
-        return this.usersService.put(id, dto);
+        return this.booksService.putById(id, dto);
     }
     remove(id) {
-        return this.usersService.removeById(id);
+        return this.booksService.remove(id);
     }
 };
-exports.UsersController = UsersController;
+exports.BookController = BookController;
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Array)
-], UsersController.prototype, "getAll", null);
+], BookController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Object)
-], UsersController.prototype, "getById", null);
+], BookController.prototype, "getById", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Object)
-], UsersController.prototype, "create", null);
+], BookController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -67,7 +67,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Object)
-], UsersController.prototype, "patch", null);
+], BookController.prototype, "update", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -75,16 +75,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Object)
-], UsersController.prototype, "put", null);
+], BookController.prototype, "put", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Object)
-], UsersController.prototype, "remove", null);
-exports.UsersController = UsersController = __decorate([
-    (0, common_1.Controller)('users'),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
-], UsersController);
-//# sourceMappingURL=users.controller.js.map
+], BookController.prototype, "remove", null);
+exports.BookController = BookController = __decorate([
+    (0, common_1.Controller)('books'),
+    __metadata("design:paramtypes", [book_services_1.BooksService])
+], BookController);
+//# sourceMappingURL=book.controller.js.map

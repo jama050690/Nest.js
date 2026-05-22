@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '../db';
+import type { User } from '../db';
 
 @Controller('users')
 export class UsersController {

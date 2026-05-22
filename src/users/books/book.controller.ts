@@ -9,7 +9,7 @@ import {
   Body,
   ParseIntPipe,
 } from '@nestjs/common';
-import { Book } from '../../db';
+import type { Book } from '../../db';
 import { BooksService } from './book.services';
 
 @Controller('books')
