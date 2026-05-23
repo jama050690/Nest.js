@@ -30,6 +30,15 @@ let UserService = class UserService {
         this.data.push(newUser);
         return newUser;
     }
+    replace(id, user) {
+        const index = this.data.findIndex((item) => item.id === Number(id));
+        if (index === -1) {
+            throw new common_1.NotFoundException();
+        }
+        const replaced = { id: Number(id), ...user };
+        this.data[index] = replaced;
+        return replaced;
+    }
     update(id, user) {
         const data = this.data.find((item) => item.id === Number(id));
         if (!data) {

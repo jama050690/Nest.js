@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { IUser } from '../types';
 import { UserService } from './users.service';
@@ -27,6 +28,11 @@ export class UserController {
   @Post()
   createUser(@Body() data: Omit<IUser, 'id'>) {
     return this.userService.create(data);
+  }
+
+  @Put(':id')
+  replaceUser(@Param('id') id: string, @Body() data: Omit<IUser, 'id'>) {
+    return this.userService.replace(id, data);
   }
 
   @Patch(':id')

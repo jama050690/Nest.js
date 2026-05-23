@@ -29,6 +29,9 @@ let UserController = class UserController {
     createUser(data) {
         return this.userService.create(data);
     }
+    replaceUser(id, data) {
+        return this.userService.replace(id, data);
+    }
     updateUser(id, data) {
         return this.userService.update(id, data);
     }
@@ -57,6 +60,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "createUser", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "replaceUser", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),

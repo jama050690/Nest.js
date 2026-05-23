@@ -34,6 +34,16 @@ export class UserService {
     return newUser;
   }
 
+  replace(id: string, user: Omit<IUser, 'id'>): IUser {
+    const index = this.data.findIndex((item: IUser) => item.id === Number(id));
+    if (index === -1) {
+      throw new NotFoundException();
+    }
+    const replaced: IUser = { id: Number(id), ...user };
+    this.data[index] = replaced;
+    return replaced;
+  }
+
   update(id: string, user: Partial<Omit<IUser, 'id'>>): IUser {
     const data = this.data.find((item: IUser) => item.id === Number(id));
     if (!data) {

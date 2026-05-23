@@ -4,6 +4,7 @@ export declare class UserService {
     getUsers(): IUser[];
     getUserById(id: string): IUser | undefined;
     create(user: Omit<IUser, 'id'>): IUser;
+    replace(id: string, user: Omit<IUser, 'id'>): IUser;
     update(id: string, user: Partial<Omit<IUser, 'id'>>): IUser;
     delete(id: string): string;
 }
