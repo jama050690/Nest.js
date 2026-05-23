@@ -1,13 +1,9 @@
-import { User } from '../db';
-export declare class UsersService {
-    private users;
-    private nextId;
-    getAll(): User[];
-    getById(id: number): User;
-    create(dto: Omit<User, 'id'>): User;
-    patch(id: number, dto: Partial<Omit<User, 'id'>>): User;
-    put(id: number, dto: Omit<User, 'id'>): User;
-    removeById(id: number): {
-        message: string;
-    };
+import { IUser } from '../types';
+export declare class UserService {
+    data: IUser[];
+    getUsers(): IUser[];
+    getUserById(id: string): IUser | undefined;
+    create(user: Omit<IUser, 'id'>): IUser;
+    update(id: string, user: Partial<Omit<IUser, 'id'>>): IUser;
+    delete(id: string): string;
 }

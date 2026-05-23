@@ -1,4 +1,4 @@
-import type { Book } from '../../db';
+import type { Book } from '../db';
 import { BooksService } from './book.services';
 export declare class BookController {
     private readonly booksService;

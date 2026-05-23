@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BooksService = void 0;
 const common_1 = require("@nestjs/common");
-const db_1 = require("../../db");
+const db_1 = require("../db");
 let BooksService = class BooksService {
     books = db_1.books;
     nextId = db_1.books.length + 1;

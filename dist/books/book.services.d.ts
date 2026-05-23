@@ -1,4 +1,4 @@
-import { Book } from '../../db';
+import { Book } from '../db';
 export declare class BooksService {
     private books;
     private nextId;

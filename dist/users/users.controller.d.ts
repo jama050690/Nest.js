@@ -1,14 +1,11 @@
-import { UsersService } from './users.service';
-import type { User } from '../db';
-export declare class UsersController {
-    private readonly usersService;
-    constructor(usersService: UsersService);
-    getAll(): User[];
-    getById(id: number): User;
-    create(dto: Omit<User, 'id'>): User;
-    patch(id: number, dto: Partial<Omit<User, 'id'>>): User;
-    put(id: number, dto: Omit<User, 'id'>): User;
-    remove(id: number): {
-        message: string;
-    };
+import { IUser } from '../types';
+import { UserService } from './users.service';
+export declare class UserController {
+    private readonly userService;
+    constructor(userService: UserService);
+    getUser(): IUser[];
+    getUserById(id: string): IUser | undefined;
+    createUser(data: Omit<IUser, 'id'>): IUser;
+    updateUser(id: string, data: Partial<Omit<IUser, 'id'>>): IUser;
+    removeUser(id: string): string;
 }

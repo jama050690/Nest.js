@@ -1,46 +1,72 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User, users } from '../db';
-
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { IUser } from '../types';
 
 @Injectable()
-export class UsersService {
-  private users: User[] = users;
-  private nextId = users.length + 1;
+export class UserService {
+  // { users: [], books: [] };
+  data: IUser[] = [];
 
-  getAll(): User[] {
-    return this.users;
+  getUsers(): IUser[] {
+    return this.data;
   }
 
-  getById(id: number): User {
-    const user = this.users.find(u => u.id === id);
-    if (!user) throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
-    return user;
+  getUserById(id: string): IUser | undefined {
+    const data = this.data.find((item: IUser) => item.id === Number(id));
+    if (!data) {
+      throw new NotFoundException();
+    }
+    return data;
   }
 
-  create(dto: Omit<User, 'id'>): User { 
-    const user: User = { id: this.nextId++, ...dto };
-    this.users.push(user);
-    return user;
+  create(user: Omit<IUser, 'id'>): IUser {
+    const data = this.data.find((item: IUser) => item.email === user.email);
+    if (data) {
+      throw new ConflictException();
+    }
+
+    const id: number = Math.round(Math.random() * 1000);
+    const newUser: IUser = { id, ...user };
+    this.data.push(newUser);
+    return newUser;
   }
 
-  patch(id: number, dto: Partial<Omit<User, 'id'>>): User {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
-    this.users[index] = { ...this.users[index], ...dto };
-    return this.users[index];
+  update(id: string, user: Partial<Omit<IUser, 'id'>>): IUser {
+    const data = this.data.find((item: IUser) => item.id === Number(id));
+    if (!data) {
+      throw new NotFoundException();
+    }
+
+    const isEmailExist = this.data.find(
+      (item: IUser) => item.email === user.email,
+    );
+    if (isEmailExist) {
+      throw new ConflictException();
+    }
+
+    const updatedUser: IUser = { ...data, ...user };
+
+    this.data = this.data.map((item: IUser) => {
+      return item.id === Number(id) ? updatedUser : item;
+    });
+
+    return updatedUser;
   }
 
-  put(id: number, dto: Omit<User, 'id'>): User {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
-    this.users[index] = { id, ...dto };
-    return this.users[index];
-  }
+  delete(id: string) {
+    const data = this.data.find((item: IUser) => item.id === Number(id));
+    if (!data) {
+      throw new NotFoundException();
+    }
 
-  removeById(id: number): { message: string } {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
-    this.users.splice(index, 1);
-    return { message: `ID ${id} li foydalanuvchi o'chirildi` };
+    this.data = this.data.filter((item: IUser) => {
+      return item.id !== Number(id);
+    });
+
+    console.log(this.data);
+    return 'Successfully deleted';
   }
 }

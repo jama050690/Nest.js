@@ -1,48 +1,44 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Put,
-  Delete,
-  Param,
   Body,
-  ParseIntPipe,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import type { User } from '../db';
+import { IUser } from '../types';
+import { UserService } from './users.service';
 
 @Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll(): User[] {
-    return this.usersService.getAll();
+  getUser(): IUser[] {
+    return this.userService.getUsers();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseIntPipe) id: number): User {
-    return this.usersService.getById(id);
+  getUserById(@Param('id') id: string) {
+    return this.userService.getUserById(id);
   }
 
   @Post()
-  create(@Body() dto: Omit<User, 'id'>): User {
-    return this.usersService.create(dto);
+  createUser(@Body() data: Omit<IUser, 'id'>) {
+    return this.userService.create(data);
   }
 
   @Patch(':id')
-  patch(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<Omit<User, 'id'>>): User {
-    return this.usersService.patch(id, dto);
-  }
-
-  @Put(':id')
-  put(@Param('id', ParseIntPipe) id: number, @Body() dto: Omit<User, 'id'>): User {
-    return this.usersService.put(id, dto);
+  updateUser(
+    @Param('id') id: string,
+    @Body() data: Partial<Omit<IUser, 'id'>>,
+  ) {
+    return this.userService.update(id, data);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): { message: string } {
-    return this.usersService.removeById(id);
+  removeUser(@Param('id') id: string) {
+    return this.userService.delete(id);
   }
 }
