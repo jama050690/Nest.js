@@ -3,80 +3,62 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { IUser } from '../types';
+import { User, users } from '../db';
 
 @Injectable()
 export class UserService {
-  // { users: [], books: [] };
-  data: IUser[] = [];
+  private data: User[] = users;
 
-  getUsers(): IUser[] {
+  getUsers(): User[] {
     return this.data;
   }
 
-  getUserById(id: string): IUser | undefined {
-    const data = this.data.find((item: IUser) => item.id === Number(id));
-    if (!data) {
-      throw new NotFoundException();
+  getUserById(id: string): User {
+    const user = this.data.find((item: User) => item.id === Number(id));
+    if (!user) {
+      throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
     }
-    return data;
+    return user;
   }
 
-  create(user: Omit<IUser, 'id'>): IUser {
-    const data = this.data.find((item: IUser) => item.email === user.email);
-    if (data) {
-      throw new ConflictException();
+  create(user: Omit<User, 'id'>): User {
+    const existing = this.data.find((item: User) => item.email === user.email);
+    if (existing) {
+      throw new ConflictException('Bu email allaqachon mavjud');
     }
 
     const id: number = Math.round(Math.random() * 1000);
-    const newUser: IUser = { id, ...user };
+    const newUser: User = { id, ...user };
     this.data.push(newUser);
     return newUser;
   }
 
-  replace(id: string, user: Omit<IUser, 'id'>): IUser {
-    const index = this.data.findIndex((item: IUser) => item.id === Number(id));
+  update(id: string, user: Partial<Omit<User, 'id'>>): User {
+    const index = this.data.findIndex((item: User) => item.id === Number(id));
     if (index === -1) {
-      throw new NotFoundException();
+      throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
     }
-    const replaced: IUser = { id: Number(id), ...user };
-    this.data[index] = replaced;
-    return replaced;
+
+    if (user.email) {
+      const isEmailExist = this.data.find(
+        (item: User) => item.email === user.email && item.id !== Number(id),
+      );
+      if (isEmailExist) {
+        throw new ConflictException('Bu email allaqachon mavjud');
+      }
+    }
+
+    this.data[index] = { ...this.data[index], ...user };
+    return this.data[index];
   }
 
-  update(id: string, user: Partial<Omit<IUser, 'id'>>): IUser {
-    const data = this.data.find((item: IUser) => item.id === Number(id));
-    if (!data) {
-      throw new NotFoundException();
+  delete(id: string): { message: string } {
+    const index = this.data.findIndex((item: User) => item.id === Number(id));
+    if (index === -1) {
+      throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
     }
 
-    const isEmailExist = this.data.find(
-      (item: IUser) => item.email === user.email,
-    );
-    if (isEmailExist) {
-      throw new ConflictException();
-    }
-
-    const updatedUser: IUser = { ...data, ...user };
-
-    this.data = this.data.map((item: IUser) => {
-      return item.id === Number(id) ? updatedUser : item;
-    });
-
-    return updatedUser;
-  }
-
-  delete(id: string) {
-    const data = this.data.find((item: IUser) => item.id === Number(id));
-    if (!data) {
-      throw new NotFoundException();
-    }
-
-    this.data = this.data.filter((item: IUser) => {
-      return item.id !== Number(id);
-    });
-
-    console.log(this.data);
-    return 'Successfully deleted';
+    this.data.splice(index, 1);
+    return { message: `ID ${id} li foydalanuvchi o'chirildi` };
   }
 }

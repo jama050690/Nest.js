@@ -1,48 +1,44 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Put,
-  Delete,
-  Param,
   Body,
-  ParseIntPipe,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import type { Book } from '../db';
 import { BooksService } from './book.services';
 
 @Controller('books')
 export class BookController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(private readonly booksService: BooksService) { }
 
   @Get()
-  getAll(): Book[] {
-    return this.booksService.getAll();
+  getBooks(): Book[] {
+    return this.booksService.getBooks();
   }
 
   @Get(':id')
-  getById(@Param('id', ParseIntPipe) id: number): Book {
-    return this.booksService.getById(id);
+  getBookById(@Param('id') id: string): Book {
+    return this.booksService.getBookById(id);
   }
 
   @Post()
-  create(@Body() dto: Omit<Book, 'id'>): Book {
-    return this.booksService.post(dto);
+  createBook(@Body() data: Omit<Book, 'id'>): Book {
+    return this.booksService.create(data);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<Omit<Book, 'id'>>): Book {
-    return this.booksService.patch(id, dto);
-  }
-
-  @Put(':id')
-  put(@Param('id', ParseIntPipe) id: number, @Body() dto: Omit<Book, 'id'>): Book {
-    return this.booksService.putById(id, dto);
+  updateBook(
+    @Param('id') id: string,
+    @Body() data: Partial<Omit<Book, 'id'>>,
+  ): Book {
+    return this.booksService.update(id, data);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): { message: string } {
-    return this.booksService.remove(id);
+  removeBook(@Param('id') id: string): { message: string } {
+    return this.booksService.delete(id);
   }
 }

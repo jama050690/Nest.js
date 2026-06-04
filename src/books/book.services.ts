@@ -1,45 +1,55 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Book, books } from '../db';
 
 @Injectable()
 export class BooksService {
-  private books: Book[] = books;
-  private nextId = books.length + 1;
+  private data: Book[] = books;
 
-  getAll(): Book[] {
-    return this.books;
+  getBooks(): Book[] {
+    return this.data;
   }
 
-  getById(id: number): Book {
-    const book = this.books.find(b => b.id === id);
-    if (!book) throw new NotFoundException(`ID ${id} li kitob topilmadi`);
+  getBookById(id: string): Book {
+    const book = this.data.find((item: Book) => item.id === Number(id));
+    if (!book) {
+      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
+    }
     return book;
   }
 
-  post(dto: Omit<Book, 'id'>): Book {
-    const book: Book = { id: this.nextId++, ...dto };
-    this.books.push(book);
-    return book;
+  create(book: Omit<Book, 'id'>): Book {
+    const existing = this.data.find((item: Book) => item.name === book.name);
+    if (existing) {
+      throw new ConflictException('Bu nomdagi kitob allaqachon mavjud');
+    }
+
+    const id: number = Math.round(Math.random() * 1000);
+    const newBook: Book = { id, ...book };
+    this.data.push(newBook);
+    return newBook;
   }
 
-  patch(id: number, dto: Partial<Omit<Book, 'id'>>): Book {
-    const index = this.books.findIndex(b => b.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li kitob topilmadi`);
-    this.books[index] = { ...this.books[index], ...dto };
-    return this.books[index];
+  update(id: string, book: Partial<Omit<Book, 'id'>>): Book {
+    const index = this.data.findIndex((item: Book) => item.id === Number(id));
+    if (index === -1) {
+      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
+    }
+
+    this.data[index] = { ...this.data[index], ...book };
+    return this.data[index];
   }
 
-  putById(id: number, dto: Omit<Book, 'id'>): Book {
-    const index = this.books.findIndex(b => b.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li kitob topilmadi`);
-    this.books[index] = { id, ...dto };
-    return this.books[index];
-  }
+  delete(id: string): { message: string } {
+    const index = this.data.findIndex((item: Book) => item.id === Number(id));
+    if (index === -1) {
+      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
+    }
 
-  remove(id: number): { message: string } {
-    const index = this.books.findIndex(b => b.id === id);
-    if (index === -1) throw new NotFoundException(`ID ${id} li kitob topilmadi`);
-    this.books.splice(index, 1);
+    this.data.splice(index, 1);
     return { message: `ID ${id} li kitob o'chirildi` };
   }
 }
