@@ -6,8 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
-import type { User } from '../db';
+import type { Author, User } from '../db';
 import { UserService } from './users.service';
 
 @Controller('users')
@@ -24,21 +25,42 @@ export class UserController {
     return this.userService.getUserByName(name);
   }
 
+  @Get(':name/author')
+  getAuthorProfile(@Param('name') name: string): Author {
+    return this.userService.getAuthorProfile(name);
+  }
+
   @Post()
   createUser(@Body() data: Omit<User, 'id'>): User {
     return this.userService.create(data);
   }
 
-  @Patch(':id')
+  @Patch(':name')
   updateUser(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body() data: Partial<Omit<User, 'id'>>,
   ): User {
-    return this.userService.update(id, data);
+    return this.userService.update(name, data);
   }
 
-  @Delete(':id')
-  removeUser(@Param('id') id: string): { message: string } {
-    return this.userService.delete(id);
+  @Patch(':name/link-author')
+  linkAuthor(
+    @Param('name') name: string,
+    @Body('authorName') authorName: string,
+  ): { user: User; author: Author } {
+    return this.userService.linkAuthor(name, authorName);
+  }
+
+  @Put(':name')
+  putUser(
+    @Param('name') name: string,
+    @Body() data: Omit<User, 'id'>,
+  ): User {
+    return this.userService.put(name, data);
+  }
+
+  @Delete(':name')
+  removeUser(@Param('name') name: string): { message: string } {
+    return this.userService.delete(name);
   }
 }

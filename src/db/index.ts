@@ -2,6 +2,7 @@ export interface Author {
   id: number;
   name: string;
   bio: string;
+  userId?: number;
 }
 
 export interface Book {
@@ -18,6 +19,7 @@ export interface User {
   email: string;
   password: string;
   isAuthor: boolean;
+  authorId?: number;
   books?: Book[];
 }
 

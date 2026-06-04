@@ -3,11 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Author, authors } from '../db';
+import { Author, authors, User, users } from '../db';
 
 @Injectable()
 export class AuthorsService {
   private data: Author[] = authors;
+  private usersData: User[] = users;
 
   getAuthors(): Author[] {
     return this.data;
@@ -15,19 +16,17 @@ export class AuthorsService {
 
   getAuthorByName(name: string): Author {
     const author = this.data.find(
-      (item: Author) => item.name.toLowerCase() === name.toLowerCase(),
+      (item: Author) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
     );
-    if (!author) {
-      throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
-    }
+    if (!author) throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
     return author;
   }
 
   create(author: Omit<Author, 'id'>): Author {
-    const existing = this.data.find((item: Author) => item.name === author.name);
-    if (existing) {
-      throw new ConflictException('Bu nomdagi muallif allaqachon mavjud');
-    }
+    const existing = this.data.find(
+      (item: Author) => item.name.trim().toLowerCase() === author.name.trim().toLowerCase(),
+    );
+    if (existing) throw new ConflictException('Bu nomdagi muallif allaqachon mavjud');
 
     const id: number = Math.round(Math.random() * 1000);
     const newAuthor: Author = { id, ...author };
@@ -35,23 +34,45 @@ export class AuthorsService {
     return newAuthor;
   }
 
-  update(id: string, author: Partial<Omit<Author, 'id'>>): Author {
-    const index = this.data.findIndex((item: Author) => item.id === Number(id));
-    if (index === -1) {
-      throw new NotFoundException(`ID ${id} li muallif topilmadi`);
-    }
+  update(name: string, author: Partial<Omit<Author, 'id'>>): Author {
+    const index = this.data.findIndex(
+      (item: Author) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
 
     this.data[index] = { ...this.data[index], ...author };
     return this.data[index];
   }
 
-  delete(id: string): { message: string } {
-    const index = this.data.findIndex((item: Author) => item.id === Number(id));
-    if (index === -1) {
-      throw new NotFoundException(`ID ${id} li muallif topilmadi`);
-    }
+  put(name: string, author: Omit<Author, 'id'>): Author {
+    const index = this.data.findIndex(
+      (item: Author) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
+
+    this.data[index] = { id: this.data[index].id, ...author };
+    return this.data[index];
+  }
+
+  delete(name: string): { message: string } {
+    const index = this.data.findIndex(
+      (item: Author) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
 
     this.data.splice(index, 1);
-    return { message: `ID ${id} li muallif o'chirildi` };
+    return { message: `"${name}" ismli muallif o'chirildi` };
+  }
+
+  getUserProfile(authorName: string): User {
+    const author = this.data.find(
+      (item: Author) => item.name.trim().toLowerCase() === authorName.trim().toLowerCase(),
+    );
+    if (!author) throw new NotFoundException(`"${authorName}" ismli muallif topilmadi`);
+    if (!author.userId) throw new NotFoundException(`"${authorName}" muallifining foydalanuvchi profili yo'q`);
+
+    const user = this.usersData.find((item: User) => item.id === author.userId);
+    if (!user) throw new NotFoundException(`Foydalanuvchi profili topilmadi`);
+    return user;
   }
 }

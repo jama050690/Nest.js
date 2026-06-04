@@ -6,13 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import type { Book } from '../db';
 import { BooksService } from './book.services';
 
 @Controller('books')
 export class BookController {
-  constructor(private readonly booksService: BooksService) { }
+  constructor(private readonly booksService: BooksService) {}
 
   @Get()
   getBooks(): Book[] {
@@ -29,16 +30,24 @@ export class BookController {
     return this.booksService.create(data);
   }
 
-  @Patch(':id')
+  @Patch(':name')
   updateBook(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body() data: Partial<Omit<Book, 'id'>>,
   ): Book {
-    return this.booksService.update(id, data);
+    return this.booksService.update(name, data);
   }
 
-  @Delete(':id')
-  removeBook(@Param('id') id: string): { message: string } {
-    return this.booksService.delete(id);
+  @Put(':name')
+  putBook(
+    @Param('name') name: string,
+    @Body() data: Omit<Book, 'id'>,
+  ): Book {
+    return this.booksService.put(name, data);
+  }
+
+  @Delete(':name')
+  removeBook(@Param('name') name: string): { message: string } {
+    return this.booksService.delete(name);
   }
 }

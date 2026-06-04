@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -15,19 +16,17 @@ export class BooksService {
 
   getBookByName(name: string): Book {
     const book = this.data.find(
-      (item: Book) => item.name.toLowerCase() === name.toLowerCase(),
+      (item: Book) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
     );
-    if (!book) {
-      throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
-    }
+    if (!book) throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
     return book;
   }
 
   create(book: Omit<Book, 'id'>): Book {
+    if (!book || !book.name) throw new BadRequestException('name maydoni majburiy');
+
     const existing = this.data.find((item: Book) => item.name === book.name);
-    if (existing) {
-      throw new ConflictException('Bu nomdagi kitob allaqachon mavjud');
-    }
+    if (existing) throw new ConflictException('Bu nomdagi kitob allaqachon mavjud');
 
     const id: number = Math.round(Math.random() * 1000);
     const newBook: Book = { id, ...book };
@@ -35,23 +34,33 @@ export class BooksService {
     return newBook;
   }
 
-  update(id: string, book: Partial<Omit<Book, 'id'>>): Book {
-    const index = this.data.findIndex((item: Book) => item.id === Number(id));
-    if (index === -1) {
-      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
-    }
+  update(name: string, book: Partial<Omit<Book, 'id'>>): Book {
+    const index = this.data.findIndex(
+      (item: Book) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
 
     this.data[index] = { ...this.data[index], ...book };
     return this.data[index];
   }
 
-  delete(id: string): { message: string } {
-    const index = this.data.findIndex((item: Book) => item.id === Number(id));
-    if (index === -1) {
-      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
-    }
+  put(name: string, book: Omit<Book, 'id'>): Book {
+    const index = this.data.findIndex(
+      (item: Book) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
+
+    this.data[index] = { id: this.data[index].id, ...book };
+    return this.data[index];
+  }
+
+  delete(name: string): { message: string } {
+    const index = this.data.findIndex(
+      (item: Book) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+    );
+    if (index === -1) throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
 
     this.data.splice(index, 1);
-    return { message: `ID ${id} li kitob o'chirildi` };
+    return { message: `"${name}" nomli kitob o'chirildi` };
   }
 }

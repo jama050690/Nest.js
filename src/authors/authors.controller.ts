@@ -6,8 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
-import type { Author } from '../db';
+import type { Author, User } from '../db';
 import { AuthorsService } from './authors.service';
 
 @Controller('authors')
@@ -24,21 +25,34 @@ export class AuthorsController {
     return this.authorsService.getAuthorByName(name);
   }
 
+  @Get(':name/user')
+  getUserProfile(@Param('name') name: string): User {
+    return this.authorsService.getUserProfile(name);
+  }
+
   @Post()
   createAuthor(@Body() data: Omit<Author, 'id'>): Author {
     return this.authorsService.create(data);
   }
 
-  @Patch(':id')
+  @Patch(':name')
   updateAuthor(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body() data: Partial<Omit<Author, 'id'>>,
   ): Author {
-    return this.authorsService.update(id, data);
+    return this.authorsService.update(name, data);
   }
 
-  @Delete(':id')
-  removeAuthor(@Param('id') id: string): { message: string } {
-    return this.authorsService.delete(id);
+  @Put(':name')
+  putAuthor(
+    @Param('name') name: string,
+    @Body() data: Omit<Author, 'id'>,
+  ): Author {
+    return this.authorsService.put(name, data);
+  }
+
+  @Delete(':name')
+  removeAuthor(@Param('name') name: string): { message: string } {
+    return this.authorsService.delete(name);
   }
 }
