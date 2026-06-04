@@ -13,10 +13,12 @@ export class BooksService {
     return this.data;
   }
 
-  getBookById(id: string): Book {
-    const book = this.data.find((item: Book) => item.id === Number(id));
+  getBookByName(name: string): Book {
+    const book = this.data.find(
+      (item: Book) => item.name.toLowerCase() === name.toLowerCase(),
+    );
     if (!book) {
-      throw new NotFoundException(`ID ${id} li kitob topilmadi`);
+      throw new NotFoundException(`"${name}" nomli kitob topilmadi`);
     }
     return book;
   }

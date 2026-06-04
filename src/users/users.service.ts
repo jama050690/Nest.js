@@ -13,10 +13,12 @@ export class UserService {
     return this.data;
   }
 
-  getUserById(id: string): User {
-    const user = this.data.find((item: User) => item.id === Number(id));
+  getUserByName(name: string): User {
+    const user = this.data.find(
+      (item: User) => item.name.toLowerCase() === name.toLowerCase(),
+    );
     if (!user) {
-      throw new NotFoundException(`ID ${id} li foydalanuvchi topilmadi`);
+      throw new NotFoundException(`"${name}" ismli foydalanuvchi topilmadi`);
     }
     return user;
   }

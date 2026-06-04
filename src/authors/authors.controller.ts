@@ -19,9 +19,9 @@ export class AuthorsController {
     return this.authorsService.getAuthors();
   }
 
-  @Get(':id')
-  getAuthorById(@Param('id') id: string): Author {
-    return this.authorsService.getAuthorById(id);
+  @Get(':name')
+  getAuthorByName(@Param('name') name: string): Author {
+    return this.authorsService.getAuthorByName(name);
   }
 
   @Post()

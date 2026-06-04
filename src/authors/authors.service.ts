@@ -13,10 +13,12 @@ export class AuthorsService {
     return this.data;
   }
 
-  getAuthorById(id: string): Author {
-    const author = this.data.find((item: Author) => item.id === Number(id));
+  getAuthorByName(name: string): Author {
+    const author = this.data.find(
+      (item: Author) => item.name.toLowerCase() === name.toLowerCase(),
+    );
     if (!author) {
-      throw new NotFoundException(`ID ${id} li muallif topilmadi`);
+      throw new NotFoundException(`"${name}" ismli muallif topilmadi`);
     }
     return author;
   }
