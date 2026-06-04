@@ -1,8 +1,10 @@
 export interface Author {
   id: number;
   name: string;
-  bio: string;
-  userId?: number;
+  bookName: string;
+  email: string;
+  birthday: string;
+  user: boolean;
 }
 
 export interface Book {
@@ -15,29 +17,30 @@ export interface Book {
 
 export interface User {
   id: number;
-  name: string;
+  username: string;
   email: string;
   password: string;
-  isAuthor: boolean;
-  authorId?: number;
-  books?: Book[];
+  author: boolean;
 }
 
 export const authors: Author[] = [
   {
     id: 1,
     name: 'Malika Yusupova',
-    bio: "NestJS va backend dasturlash bo'yicha mutaxassis",
+    bookName: 'NestJS Asoslari',
+    email: 'malika@example.com',
+    birthday: '1990-05-15',
+    user: false,
   },
 ];
 
 export const users: User[] = [
   {
     id: 1,
-    name: 'Ali Karimov',
+    username: 'Ali Karimov',
     email: 'ali@example.com',
     password: 'secret123',
-    isAuthor: false,
+    author: false,
   },
 ];
 

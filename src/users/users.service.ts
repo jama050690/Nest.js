@@ -14,11 +14,11 @@ export class UserService {
     return this.data;
   }
 
-  getUserByName(name: string): User {
+  getUserByName(username: string): User {
     const user = this.data.find(
-      (item: User) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (!user) throw new NotFoundException(`"${name}" ismli foydalanuvchi topilmadi`);
+    if (!user) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
     return user;
   }
 
@@ -32,17 +32,17 @@ export class UserService {
     return newUser;
   }
 
-  update(name: string, user: Partial<Omit<User, 'id'>>): User {
+  update(username: string, user: Partial<Omit<User, 'id'>>): User {
     const index = this.data.findIndex(
-      (item: User) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (index === -1) throw new NotFoundException(`"${name}" ismli foydalanuvchi topilmadi`);
+    if (index === -1) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
 
     if (user.email) {
       const isEmailExist = this.data.find(
         (item: User) =>
           item.email === user.email &&
-          item.name.toLowerCase() !== name.toLowerCase(),
+          item.username.toLowerCase() !== username.toLowerCase(),
       );
       if (isEmailExist) throw new ConflictException('Bu email allaqachon mavjud');
     }
@@ -51,40 +51,39 @@ export class UserService {
     return this.data[index];
   }
 
-  put(name: string, user: Omit<User, 'id'>): User {
+  put(username: string, user: Omit<User, 'id'>): User {
     const index = this.data.findIndex(
-      (item: User) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (index === -1) throw new NotFoundException(`"${name}" ismli foydalanuvchi topilmadi`);
+    if (index === -1) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
 
     this.data[index] = { id: this.data[index].id, ...user };
     return this.data[index];
   }
 
-  delete(name: string): { message: string } {
+  delete(username: string): { message: string } {
     const index = this.data.findIndex(
-      (item: User) => item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (index === -1) throw new NotFoundException(`"${name}" ismli foydalanuvchi topilmadi`);
+    if (index === -1) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
 
     this.data.splice(index, 1);
-    return { message: `"${name}" ismli foydalanuvchi o'chirildi` };
+    return { message: `"${username}" ismli foydalanuvchi o'chirildi` };
   }
 
-  linkAuthor(userName: string, authorName: string): { user: User; author: Author } {
+  linkAuthor(username: string, authorName: string): { user: User; author: Author } {
     const userIndex = this.data.findIndex(
-      (item: User) => item.name.trim().toLowerCase() === userName.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (userIndex === -1) throw new NotFoundException(`"${userName}" ismli foydalanuvchi topilmadi`);
+    if (userIndex === -1) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
 
     const authorIndex = this.authorsData.findIndex(
       (item: Author) => item.name.trim().toLowerCase() === authorName.trim().toLowerCase(),
     );
     if (authorIndex === -1) throw new NotFoundException(`"${authorName}" ismli muallif topilmadi`);
 
-    this.data[userIndex].isAuthor = true;
-    this.data[userIndex].authorId = this.authorsData[authorIndex].id;
-    this.authorsData[authorIndex].userId = this.data[userIndex].id;
+    this.data[userIndex].author = true;
+    this.authorsData[authorIndex].user = true;
 
     return {
       user: this.data[userIndex],
@@ -92,14 +91,16 @@ export class UserService {
     };
   }
 
-  getAuthorProfile(userName: string): Author {
+  getAuthorProfile(username: string): Author {
     const user = this.data.find(
-      (item: User) => item.name.trim().toLowerCase() === userName.trim().toLowerCase(),
+      (item: User) => item.username.trim().toLowerCase() === username.trim().toLowerCase(),
     );
-    if (!user) throw new NotFoundException(`"${userName}" ismli foydalanuvchi topilmadi`);
-    if (!user.authorId) throw new NotFoundException(`"${userName}" foydalanuvchisi hali muallif emas`);
+    if (!user) throw new NotFoundException(`"${username}" ismli foydalanuvchi topilmadi`);
+    if (!user.author) throw new NotFoundException(`"${username}" foydalanuvchisi hali muallif emas`);
 
-    const author = this.authorsData.find((item: Author) => item.id === user.authorId);
+    const author = this.authorsData.find(
+      (item: Author) => item.name.trim().toLowerCase() === username.trim().toLowerCase(),
+    );
     if (!author) throw new NotFoundException(`Muallif profili topilmadi`);
     return author;
   }

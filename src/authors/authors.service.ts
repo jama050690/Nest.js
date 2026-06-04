@@ -69,9 +69,11 @@ export class AuthorsService {
       (item: Author) => item.name.trim().toLowerCase() === authorName.trim().toLowerCase(),
     );
     if (!author) throw new NotFoundException(`"${authorName}" ismli muallif topilmadi`);
-    if (!author.userId) throw new NotFoundException(`"${authorName}" muallifining foydalanuvchi profili yo'q`);
+    if (!author.user) throw new NotFoundException(`"${authorName}" muallifining foydalanuvchi profili yo'q`);
 
-    const user = this.usersData.find((item: User) => item.id === author.userId);
+    const user = this.usersData.find(
+      (item: User) => item.username.trim().toLowerCase() === authorName.trim().toLowerCase(),
+    );
     if (!user) throw new NotFoundException(`Foydalanuvchi profili topilmadi`);
     return user;
   }
